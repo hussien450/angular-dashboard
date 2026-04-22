@@ -1,0 +1,103 @@
+<div class="space-y-6">
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <div class="glass-card p-5 flex items-center gap-4 border-t-2 border-green-500">
+      <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+        <i class="fas fa-check-circle text-green-400 text-xl" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-slate-100">{{ inStockCount }}</p>
+        <p class="text-sm text-slate-500">In Stock</p>
+      </div>
+    </div>
+    <div class="glass-card p-5 flex items-center gap-4 border-t-2 border-amber-500">
+      <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+        <i class="fas fa-triangle-exclamation text-amber-400 text-xl" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-slate-100">{{ lowStockCount }}</p>
+        <p class="text-sm text-slate-500">Low Stock</p>
+      </div>
+    </div>
+    <div class="glass-card p-5 flex items-center gap-4 border-t-2 border-red-500">
+      <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
+        <i class="fas fa-circle-xmark text-red-400 text-xl" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-slate-100">{{ outOfStockCount }}</p>
+        <p class="text-sm text-slate-500">Out of Stock</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Low stock alert -->
+  <div *ngIf="lowStockCount > 0 || outOfStockCount > 0"
+       class="flex items-center gap-3 px-5 py-3 rounded-xl
+              bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm">
+    <i class="fas fa-bell text-base" aria-hidden="true"></i>
+    <span>
+      <strong>{{ lowStockCount + outOfStockCount }} products</strong> require restocking attention.
+    </span>
+  </div>
+
+  <!-- Filters -->
+  <div class="glass-card p-4 flex flex-wrap gap-3">
+    <div class="relative flex-1 min-w-48">
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true"></i>
+      <input class="input-field pl-9" type="search" placeholder="Search name or SKU..."
+             [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" aria-label="Search products" id="inv-search">
+    </div>
+    <select class="input-field w-44" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()" aria-label="Filter by stock status" id="inv-status">
+      <option value="">All Statuses</option>
+      <option value="in_stock">In Stock</option>
+      <option value="low_stock">Low Stock</option>
+      <option value="out_of_stock">Out of Stock</option>
+    </select>
+    <select class="input-field w-44" [(ngModel)]="filterCategory" (ngModelChange)="applyFilters()" aria-label="Filter by category" id="inv-category">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="glass-card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" aria-label="Inventory table">
+        <thead>
+          <tr class="border-b border-white/10 text-left text-xs text-slate-500 uppercase tracking-wider">
+            <th class="px-5 py-4 font-semibold">Product</th>
+            <th class="px-5 py-4 font-semibold">SKU</th>
+            <th class="px-5 py-4 font-semibold">Category</th>
+            <th class="px-5 py-4 font-semibold">Stock Level</th>
+            <th class="px-5 py-4 font-semibold">Price</th>
+            <th class="px-5 py-4 font-semibold">Status</th>
+            <th class="px-5 py-4 font-semibold">Supplier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts" class="border-b border-white/5 table-row-hover">
+            <td class="px-5 py-4 font-medium text-slate-200">{{ product.name }}</td>
+            <td class="px-5 py-4 font-mono text-slate-400 text-xs">{{ product.sku }}</td>
+            <td class="px-5 py-4 text-slate-400">{{ product.category }}</td>
+            <td class="px-5 py-4 min-w-[160px]">
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-500"
+                       [class]="stockBarColor(product.status)"
+                       [style.width.%]="stockPercent(product)"></div>
+                </div>
+                <span class="text-xs text-slate-400 w-14 text-right">
+                  {{ product.stock }}/{{ product.minStock * 3 }}
+                </span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-slate-200 font-semibold">${{ product.price.toLocaleString() }}</td>
+            <td class="px-5 py-4"><app-badge [status]="product.status"></app-badge></td>
+            <td class="px-5 py-4 text-slate-400 text-xs">{{ product.supplier }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

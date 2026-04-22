@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0a0e1a; color: #e8eaf6; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl;
+  }
+  .btn-primary {
+    @apply bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2
+           focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#0a0e1a];
+  }
+  .btn-ghost {
+    @apply bg-white/5 hover:bg-white/10 text-slate-300 font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2
+           focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#0a0e1a];
+  }
+  .btn-danger {
+    @apply bg-red-600/20 hover:bg-red-600/40 text-red-400 font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 active:scale-95 border border-red-500/30;
+  }
+  .input-field {
+    @apply w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-slate-100
+           placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500
+           focus:border-transparent transition-all duration-200;
+  }
+  .table-row-hover {
+    @apply hover:bg-white/5 transition-colors duration-150;
+  }
+  .page-enter {
+    animation: pageEnter 0.3s ease-out;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
+  }
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes counterUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stat-number {
+  animation: counterUp 0.5s ease-out;
+}

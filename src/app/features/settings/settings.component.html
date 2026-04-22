@@ -1,0 +1,38 @@
+<div class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-slate-100">System Settings</h2>
+      <p class="text-sm text-slate-500 mt-1">Platform configuration — super admin only</p>
+    </div>
+    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg
+         bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-semibold">
+      <i class="fas fa-crown text-xs" aria-hidden="true"></i>
+      Super Admin Access
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div *ngFor="let card of settingCards" class="glass-card p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+          <i [class]="'fas ' + card.icon + ' text-indigo-400'" aria-hidden="true"></i>
+        </div>
+        <h3 class="font-semibold text-slate-200">{{ card.title }}</h3>
+      </div>
+      <div class="space-y-3">
+        <div *ngFor="let item of card.items"
+             class="flex items-center justify-between py-2
+                    border-b border-white/5 last:border-0">
+          <span class="text-sm text-slate-400">{{ item.label }}</span>
+          <span *ngIf="item.type === 'text'"
+                class="text-sm font-medium text-slate-200">{{ item.value }}</span>
+          <span *ngIf="item.type === 'badge'"
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                       bg-green-500/20 text-green-400 border border-green-500/30">
+            {{ item.value }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

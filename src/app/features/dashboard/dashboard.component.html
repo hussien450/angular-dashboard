@@ -1,0 +1,88 @@
+<div class="space-y-6">
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+    <app-stat-card
+      *ngFor="let stat of kpiStats"
+      [label]="stat.label"
+      [value]="stat.value"
+      [change]="stat.change"
+      [icon]="stat.icon"
+      [iconColor]="stat.iconColor">
+    </app-stat-card>
+  </div>
+
+  <!-- Charts row -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+    <!-- Revenue Chart -->
+    <div class="xl:col-span-2 glass-card p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-base font-semibold text-slate-100">Revenue &amp; Profit</h2>
+          <p class="text-xs text-slate-500 mt-0.5">12-month performance (USD thousands)</p>
+        </div>
+        <span class="text-xs text-slate-500 bg-white/5 px-3 py-1 rounded-lg">2024</span>
+      </div>
+      <div class="h-64">
+        <canvas #revenueChart aria-label="Revenue and profit line chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Category Chart -->
+    <div class="glass-card p-6">
+      <div class="mb-5">
+        <h2 class="text-base font-semibold text-slate-100">Sales by Category</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Revenue distribution</p>
+      </div>
+      <div class="h-64">
+        <canvas #categoryChart aria-label="Category breakdown doughnut chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Orders -->
+  <div class="glass-card p-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-base font-semibold text-slate-100">Recent Orders</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Latest 6 transactions</p>
+      </div>
+      <a routerLink="/orders"
+         class="text-xs font-medium text-indigo-400 hover:text-indigo-300
+                transition-colors flex items-center gap-1">
+        View all <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+      </a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" aria-label="Recent orders">
+        <thead>
+          <tr class="border-b border-white/10 text-left text-xs text-slate-500
+                     uppercase tracking-wider">
+            <th class="pb-3 pr-4 font-semibold">Order ID</th>
+            <th class="pb-3 pr-4 font-semibold">Customer</th>
+            <th class="pb-3 pr-4 font-semibold">Total</th>
+            <th class="pb-3 pr-4 font-semibold">Status</th>
+            <th class="pb-3 font-semibold">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of recentOrders"
+              class="border-b border-white/5 table-row-hover">
+            <td class="py-3 pr-4 font-mono text-indigo-400 font-medium">
+              {{ order.id }}
+            </td>
+            <td class="py-3 pr-4 text-slate-200">{{ order.customerName }}</td>
+            <td class="py-3 pr-4 text-slate-200 font-semibold">
+              ${{ order.total.toLocaleString() }}
+            </td>
+            <td class="py-3 pr-4">
+              <app-badge [status]="order.status"></app-badge>
+            </td>
+            <td class="py-3 text-slate-500">{{ order.createdAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

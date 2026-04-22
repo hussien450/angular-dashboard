@@ -1,0 +1,162 @@
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-slate-100">User Management</h2>
+      <p class="text-sm text-slate-500 mt-1">{{ filteredUsers.length }} users found</p>
+    </div>
+    <button class="btn-primary flex items-center gap-2" (click)="openAddModal()" id="add-user-btn">
+      <i class="fas fa-plus text-sm" aria-hidden="true"></i> Add User
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="glass-card p-4 flex flex-wrap gap-3">
+    <div class="relative flex-1 min-w-48">
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true"></i>
+      <input class="input-field pl-9" type="search" placeholder="Search name or email..."
+             [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" aria-label="Search users" id="user-search">
+    </div>
+    <select class="input-field w-40" [(ngModel)]="filterRole" (ngModelChange)="applyFilters()" aria-label="Filter by role" id="filter-role">
+      <option value="">All Roles</option>
+      <option *ngFor="let r of roles" [value]="r">{{ formatRole(r) }}</option>
+    </select>
+    <select class="input-field w-40" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()" aria-label="Filter by status" id="filter-status">
+      <option value="">All Statuses</option>
+      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="glass-card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" aria-label="Users table">
+        <thead>
+          <tr class="border-b border-white/10 text-left text-xs text-slate-500 uppercase tracking-wider">
+            <th class="px-5 py-4 font-semibold">User</th>
+            <th class="px-5 py-4 font-semibold">Role</th>
+            <th class="px-5 py-4 font-semibold">Status</th>
+            <th class="px-5 py-4 font-semibold">Department</th>
+            <th class="px-5 py-4 font-semibold">Last Login</th>
+            <th class="px-5 py-4 font-semibold text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" class="border-b border-white/5 table-row-hover">
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600
+                            flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {{ getInitials(user.name) }}
+                </div>
+                <div>
+                  <p class="font-medium text-slate-200">{{ user.name }}</p>
+                  <p class="text-xs text-slate-500">{{ user.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-4"><app-badge [status]="user.role" [label]="formatRole(user.role)"></app-badge></td>
+            <td class="px-5 py-4"><app-badge [status]="user.status"></app-badge></td>
+            <td class="px-5 py-4 text-slate-400">{{ user.department }}</td>
+            <td class="px-5 py-4 text-slate-500 text-xs">{{ user.lastLogin | date:'medium' }}</td>
+            <td class="px-5 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button (click)="openEditModal(user)"
+                        class="w-8 h-8 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400
+                               hover:text-indigo-400 transition-all duration-200 flex items-center justify-center"
+                        [attr.aria-label]="'Edit ' + user.name">
+                  <i class="fas fa-pen text-xs" aria-hidden="true"></i>
+                </button>
+                <button (click)="confirmDelete(user)"
+                        class="w-8 h-8 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400
+                               hover:text-red-400 transition-all duration-200 flex items-center justify-center"
+                        [attr.aria-label]="'Delete ' + user.name">
+                  <i class="fas fa-trash-can text-xs" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="6" class="px-5 py-12 text-center text-slate-500">
+              <i class="fas fa-users-slash text-3xl mb-3 block opacity-40" aria-hidden="true"></i>
+              No users match your filters.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div *ngIf="showModal"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+     role="dialog" aria-modal="true" [attr.aria-label]="isEditing ? 'Edit user' : 'Add user'">
+  <div class="glass-card w-full max-w-md p-6 shadow-2xl shadow-black/50">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-lg font-bold text-slate-100">{{ isEditing ? 'Edit User' : 'Add New User' }}</h3>
+      <button (click)="closeModal()" class="text-slate-400 hover:text-slate-200 transition-colors" aria-label="Close modal">
+        <i class="fas fa-xmark text-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+    <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5" for="user-name">Full Name</label>
+        <input id="user-name" class="input-field" type="text" formControlName="name" placeholder="Full name">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5" for="user-email">Email</label>
+        <input id="user-email" class="input-field" type="email" formControlName="email" placeholder="email@corp.com">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5" for="user-role">Role</label>
+          <select id="user-role" class="input-field" formControlName="role">
+            <option *ngFor="let r of roles" [value]="r">{{ formatRole(r) }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5" for="user-status">Status</label>
+          <select id="user-status" class="input-field" formControlName="status">
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5" for="user-dept">Department</label>
+        <select id="user-dept" class="input-field" formControlName="department">
+          <option value="">Select department</option>
+          <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+        </select>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" (click)="closeModal()" class="btn-ghost flex-1">Cancel</button>
+        <button type="submit" [attr.disabled]="userForm.invalid ? true : null"
+                class="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed">
+          {{ isEditing ? 'Save Changes' : 'Add User' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div *ngIf="showDeleteConfirm"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+     role="alertdialog" aria-modal="true" aria-label="Confirm user deletion">
+  <div class="glass-card w-full max-w-sm p-6 shadow-2xl shadow-black/50 text-center">
+    <div class="w-14 h-14 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+      <i class="fas fa-triangle-exclamation text-red-400 text-xl" aria-hidden="true"></i>
+    </div>
+    <h3 class="text-lg font-bold text-slate-100 mb-2">Delete User?</h3>
+    <p class="text-sm text-slate-400 mb-6">
+      Are you sure you want to delete <strong class="text-slate-200">{{ deletingUser?.name }}</strong>?
+      This action cannot be undone.
+    </p>
+    <div class="flex gap-3">
+      <button (click)="cancelDelete()" class="btn-ghost flex-1">Cancel</button>
+      <button (click)="deleteUser()" class="btn-danger flex-1">Delete</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+<div class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-slate-100">Financial Reports</h2>
+      <p class="text-sm text-slate-500 mt-1">Annual overview — {{ selectedYear }}</p>
+    </div>
+    <button class="btn-ghost flex items-center gap-2" id="export-report-btn">
+      <i class="fas fa-file-arrow-down text-sm" aria-hidden="true"></i> Export PDF
+    </button>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <div class="glass-card p-5 border-t-2 border-indigo-500">
+      <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Total Revenue</p>
+      <p class="text-3xl font-bold text-slate-100 mt-2">{{ formatCurrency(totalRevenue) }}</p>
+      <p class="text-xs text-green-400 mt-1 flex items-center gap-1">
+        <i class="fas fa-arrow-trend-up" aria-hidden="true"></i> +18.4% YoY
+      </p>
+    </div>
+    <div class="glass-card p-5 border-t-2 border-red-500">
+      <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Total Expenses</p>
+      <p class="text-3xl font-bold text-slate-100 mt-2">{{ formatCurrency(totalExpenses) }}</p>
+      <p class="text-xs text-red-400 mt-1 flex items-center gap-1">
+        <i class="fas fa-arrow-trend-up" aria-hidden="true"></i> +11.2% YoY
+      </p>
+    </div>
+    <div class="glass-card p-5 border-t-2 border-green-500">
+      <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Net Profit</p>
+      <p class="text-3xl font-bold text-slate-100 mt-2">{{ formatCurrency(totalProfit) }}</p>
+      <p class="text-xs text-green-400 mt-1 flex items-center gap-1">
+        <i class="fas fa-arrow-trend-up" aria-hidden="true"></i> +29.7% YoY
+      </p>
+    </div>
+  </div>
+
+  <!-- Bar Chart -->
+  <div class="glass-card p-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-base font-semibold text-slate-100">Monthly Breakdown</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Revenue, Expenses & Profit (USD thousands)</p>
+      </div>
+    </div>
+    <div class="h-80">
+      <canvas #barChart aria-label="Monthly revenue, expenses and profit bar chart"></canvas>
+    </div>
+  </div>
+</div>
